@@ -12,7 +12,8 @@ Build-Depends-Indep: libhttp-message-perl,
  libtype-tiny-perl (>= 0.044),
  libyaml-perl (>= 0.90),
  liblog-dispatch-perl,
- libmoose-perl
+ libmoose-perl,
+ libmoosex-types-perl
 Standards-Version: 3.9.8
 Homepage: https://github.com/khrt/Raisin
 
