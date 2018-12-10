@@ -10,7 +10,9 @@ Build-Depends-Indep: libhttp-message-perl,
  libplack-middleware-crossorigin-perl (>= 0.009),
  libplack-perl (>= 1.0030),
  libtype-tiny-perl (>= 0.044),
- libyaml-perl (>= 0.90)
+ libyaml-perl (>= 0.90),
+ liblog-dispatch-perl,
+ libmoose-perl
 Standards-Version: 3.9.8
 Homepage: https://github.com/khrt/Raisin
 
