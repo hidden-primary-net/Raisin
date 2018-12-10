@@ -1,3 +1,9 @@
+libraisin-perl (0.79-3) jessie-testing; urgency=low
+
+  * chore: Complete build dependencies
+
+ -- Marco Schumann <marco.schumann@pyur.com>  Mon, 10 Dec 2018 08:49:45 +0100
+
 libraisin-perl (0.79-2) jessie-testing; urgency=low
 
   * chore: Complete build dependencies
