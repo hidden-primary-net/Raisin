@@ -1,3 +1,9 @@
+libraisin-perl (0.79-4) jessie-testing; urgency=low
+
+  * chore: Attempt to relax the JSON dependency
+
+ -- Marco Schumann <marco.schumann@pyur.com>  Tue, 11 Dec 2018 14:24:58 +0100
+
 libraisin-perl (0.79-3) jessie-testing; urgency=low
 
   * chore: Complete build dependencies
