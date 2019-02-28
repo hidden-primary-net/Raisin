@@ -1,3 +1,13 @@
+0.82
+    * OpenAPI/Swagger fixes (#59, #63);
+    * JSON encoder improvements (#58, #62);
+
+0.81
+    * Do not cache routes if nothing found (#61);
+
+0.80
+    * Minor fixes;
+
 0.79
     * Do not eval inside eval to propagate error message correctly from
       parameter validator (relates to #32);
