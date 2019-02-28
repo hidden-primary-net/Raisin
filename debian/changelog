@@ -1,3 +1,9 @@
+libraisin-perl (0.82-1) jessie-testing; urgency=low
+
+  * incorporate our pull requests
+
+ -- Marco Schumann <marco.schumann@pyur.com>  Thu, 28 Feb 2019 14:18:31 +0100
+
 libraisin-perl (0.79-4) jessie-testing; urgency=low
 
   * chore: Attempt to relax the JSON dependency
