@@ -6,6 +6,7 @@ Build-Depends: debhelper (>= 9),
  libmodule-build-perl,
  perl
 Build-Depends-Indep: libhttp-message-perl,
+ libjson-maybexs-perl,
  libjson-perl,
  libplack-middleware-crossorigin-perl (>= 0.009),
  libplack-perl (>= 1.0030),
@@ -21,6 +22,7 @@ Package: libraisin-perl
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends},
  libhttp-message-perl,
+ libjson-maybexs-perl,
  libjson-perl,
  libplack-middleware-crossorigin-perl (>= 0.009),
  libplack-perl (>= 1.0030),
