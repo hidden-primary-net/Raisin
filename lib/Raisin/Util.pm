@@ -8,6 +8,7 @@ use Plack::Util;
 sub make_tag_from_path {
     my $path = shift;
     my @c = (split '/', $path);
+    return 'none' unless scalar @c;
     $c[-2] || $c[1];
 }
 
@@ -20,7 +21,6 @@ sub iterate_params {
         ($params->[$index-2], $params->[$index-1]);
     };
 }
-
 
 1;
 

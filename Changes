@@ -1,3 +1,24 @@
+0.89
+    * Change arguments ordering in Enum of swagger test (#93);
+
+0.88
+    * UTF-8 in JSON content-type (#87);
+    * Support Enum in Swagger (#89);
+
+0.87
+    * Fix route SETTING hash merging (#77);
+
+0.86
+    * Generate valid OpenAPI/Swagger spec:
+        - omit `tags` if none;
+        - set array of any type if `using` is not specified;
+
+0.84, 0.85
+    * Update dependencies (#70);
+
+0.83
+    * Detect missing comma and give clearer error. (#65);
+
 0.82
     * OpenAPI/Swagger fixes (#59, #63);
     * JSON encoder improvements (#58, #62);

@@ -144,6 +144,18 @@ isn't specified for it.
 
     route_param id => sub { ... };
 
+Raisin allows you to nest `route_param`:
+
+    params requires => { name => 'id', type => Int };
+    route_param id => sub {
+        get sub { ... };
+
+        params requires => { name => 'sub_id', type => Int };
+        route_param sub_id => sub {
+            ...
+        };
+    };
+
 ### del, get, patch, post, put
 
 Shortcuts to add a `route` restricted to the corresponding HTTP method.

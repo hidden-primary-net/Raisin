@@ -8,7 +8,7 @@ use parent 'Raisin::Plugin';
 use Carp 'croak';
 use Data::Dumper;
 use Digest::MD5 qw/md5_hex/;
-use JSON qw/encode_json/;
+use JSON::MaybeXS qw/encode_json/;
 use List::Util qw/pairmap/;
 use Scalar::Util qw(blessed);
 
@@ -106,9 +106,14 @@ sub _spec_20 {
         #responses => undef,
         securityDefinitions => _security_definitions_object(),
         security => _security_object(),
-        tags => _tags_object($self->app),
+        #tags => undef,
         #externalDocs => undef,
     );
+
+    my $tags = _tags_object($self->app);
+    if (scalar @$tags) {
+        $spec{tags} = $tags;
+    }
 
     # routes
     $self->app->add_route(
@@ -256,11 +261,17 @@ sub _parameters_object {
             $ptype->{schema}{'$ref'} = delete $ptype->{'$ref'};
         }
 
+        # If the type is an Enum, set type to string and give the enum values.
+        if (_type_is_enum($p->type)) {
+            $ptype->{type} = 'string';
+            $ptype->{enum} = $p->type->values;
+        }
+
         my %param = (
             description => $p->desc || '',
             in          => $location,
             name        => $p->name,
-            required    => $p->required ? JSON::true : JSON::false,
+            required    => $p->required ? JSON::MaybeXS::true : JSON::MaybeXS::false,
             %$ptype,
         );
         $param{default} = $p->default if defined $p->default;
@@ -284,7 +295,7 @@ sub _definitions_object {
         my @pp = @{ $r->params };
         while (my $p = pop @pp) {
             next unless _type_name($p->type) =~ /^HashRef$/;
-            push @pp, @{ $p->enclosed };
+            push @pp, @{ $p->enclosed || [] };
             push @objects, $p;
         }
     }
@@ -301,7 +312,7 @@ sub _collect_nested_definitions {
     my @nested;
     for my $obj (@objects) {
         if( $obj->can('enclosed') ) {
-            for my $expose ( @{$obj->enclosed} ) {
+            for my $expose ( @{ $obj->enclosed || [] } ) {
                 if (exists $expose->{'using'} ){
                     push @nested, $expose->{using};
                 }
@@ -319,7 +330,7 @@ sub _schema_object {
     return unless _type_name($p->type) =~ /^HashRef$/;
 
     my (@required, %properties);
-    for my $pp (@{ $p->enclosed }) {
+    for my $pp (@{ $p->enclosed || [] }) {
         $properties{ _type_name($pp) } = _param_type_object($pp);
 
         push @required, _type_name($pp) if $pp->required;
@@ -340,6 +351,7 @@ sub _tags_object  {
 
     my %tags;
     for my $r (@{ $app->routes->routes }) {
+        next unless $_;
         $tags{ $_ }++ for @{ $r->tags };
     }
 
@@ -362,11 +374,10 @@ sub _tags_object  {
 # get the name of a type
 sub _type_name {
     my $type = shift;
-
-    if ($type->can('display_name')) {
+    if ($type && $type->can('display_name')) {
         return $type->display_name;
     }
-    elsif ($type->can('name')) {
+    elsif ($type && $type->can('name')) {
         # fall back to name() (e.g. Moose types do not have display_name)
         return $type->name;
     }
@@ -402,11 +413,12 @@ sub _param_type_object {
         }
 
         if ($type eq 'object') {
-            my $ref = do {
-                if   ($p->can('using') && $p->using) { $p->using }
-                else { $p }
-            };
-            $item{items}{'$ref'} = sprintf('#/definitions/%s', _name_for_object($ref));
+            if ($p->can('using') && $p->using) {
+                $item{items}{'$ref'} = sprintf('#/definitions/%s', _name_for_object($p->using));
+            }
+            else {
+                $item{items} = {}; # {} is the "any-type" schema.
+            }
         }
         else {
             $item{items}->{type} = $type;
@@ -425,7 +437,7 @@ sub _param_type_object {
 
 sub _param_type {
     my $t = shift;
-    if ( $t->can('name') ) {  # allow nested types as Str in ArrayRef[Str]
+    if ($t && $t->can('name')) {  # allow nested types as Str in ArrayRef[Str]
         if    ($t->name =~ /int/i)            { 'integer', 'int32' }
         elsif ($t->name =~ /long/i)           { 'integer', 'int64' }
         elsif ($t->name =~ /num|float|real/i) { 'number',  'float' }
@@ -441,9 +453,9 @@ sub _param_type {
             if   (_type_name($t) =~ /ArrayRef/) { 'array',  undef }
             else                                  { 'object', undef }    # fallback
         }
-   }
+    }
     else {
-         { $t, undef }
+        { $t, undef }
     }
 }
 
@@ -462,6 +474,15 @@ sub _name_for_object {
     #--- $ref values must be RFC3986 compliant URIs ---
     $objname =~ s/::/-/g;
     sprintf '%s-%s', $objname, uc(substr($fingerprint, 0, 10));
+}
+
+sub _type_is_enum {
+    my $type = shift;
+
+    return 1 if $type->isa('Moose::Meta::TypeConstraint::Enum')
+             or $type->isa('Type::Tiny::Enum');
+
+    return 0;
 }
 
 1;

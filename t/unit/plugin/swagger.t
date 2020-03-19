@@ -2,9 +2,9 @@
 use strict;
 use warnings;
 
-use JSON;
+use JSON::MaybeXS;
 use Test::More;
-use Types::Standard qw/HashRef ArrayRef Str/;
+use Types::Standard qw/HashRef ArrayRef Str Enum/;
 
 use Raisin;
 use Raisin::Param;
@@ -70,7 +70,7 @@ my @PARAMETERS_CASES = (
                 description => '',
                 in => 'path',
                 name => 'str',
-                required => JSON::true,
+                required => JSON::MaybeXS::true,
                 type => 'string',
             }
         ]
@@ -90,7 +90,7 @@ my @PARAMETERS_CASES = (
                 description => '',
                 in => 'query',
                 name => 'str',
-                required => JSON::true,
+                required => JSON::MaybeXS::true,
                 type => 'string',
             }
         ]
@@ -110,7 +110,7 @@ my @PARAMETERS_CASES = (
                 description => '',
                 in => 'formData',
                 name => 'str',
-                required => JSON::true,
+                required => JSON::MaybeXS::true,
                 type => 'string',
             }
         ]
@@ -130,8 +130,29 @@ my @PARAMETERS_CASES = (
                 description => '',
                 in => 'header',
                 name => 'str',
-                required => JSON::true,
+                required => JSON::MaybeXS::true,
                 type => 'string',
+            }
+        ]
+    },
+    {
+        method => 'POST',
+        params => [
+            Raisin::Param->new(
+                named => 0,
+                type  => 'required',
+                spec  => { name => 'enum', type => Enum[qw(bar foo)], default => 'foo', in => 'body' },
+            )
+        ],
+        expected => [
+            {
+                default     => 'foo',
+                description => '',
+                in          => 'body',
+                name        => 'enum',
+                required    => JSON::MaybeXS::true,
+                type        => 'string',
+                enum        => [qw(bar foo)],
             }
         ]
     },
@@ -164,7 +185,7 @@ my @PARAMETERS_CASES = (
                 description => '',
                 in => 'body',
                 name => 'person',
-                required => JSON::true,
+                required => JSON::MaybeXS::true,
                 schema => {
                     '$ref' => '#/definitions/Person',
                 },

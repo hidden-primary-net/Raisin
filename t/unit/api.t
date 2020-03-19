@@ -3,6 +3,7 @@ use strict;
 use warnings;
 
 use Test::More;
+use Test::Exception;
 
 use Raisin::API;
 use Raisin::Entity::Object;
@@ -284,6 +285,45 @@ subtest 'error' => sub {
     my $res = Raisin::API->app->res;
     is $res->status, 501, 'status';
     is $res->body, 'Unit test!', 'body';
+
+    _clean_app();
+};
+
+subtest 'resource_bad' => sub {
+    throws_ok {
+         resource l0 => sub {
+              resource l1a => sub {}, # should be semicolon, not comma!
+              resource l1b => sub {};
+         };
+    } qr/missing a semicolon/, "Bad comma caught";
+    _clean_app();
+};
+
+subtest 'params nested route_param' => sub {
+    resource api => sub {
+        params requires => { name => 'id', type => undef };
+        route_param id => sub {
+            get sub { param };
+
+            params requires => { name => 'sub_id', type => undef };
+            route_param sub_id => sub {
+                get sub { param };
+            };
+        }
+    };
+
+    my $app = Raisin::API->app;
+    my $e = $app->routes->routes->[1];
+
+    my %params = map { $_->name => $_ } @{ $e->params };
+
+    ok $params{id}, 'id';
+    is $params{id}->named, 1, 'named';
+    is $params{id}->required, 1, 'required';
+
+    ok $params{sub_id}, 'sub_id';
+    is $params{sub_id}->named, 1, 'named';
+    is $params{sub_id}->required, 1, 'required';
 
     _clean_app();
 };

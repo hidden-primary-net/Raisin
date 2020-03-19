@@ -6,9 +6,11 @@ use warnings;
 use parent 'Exporter';
 
 use Carp;
+use Hash::Merge qw(merge);
 
 use Raisin;
 use Raisin::Entity;
+# use Raisin::Util qw(merge);
 
 my @APP_CONF_METHODS = qw(
     app
@@ -77,7 +79,11 @@ sub after { app->add_hook('after', shift) }
 # Resource
 #
 sub resource {
-    my ($name, $code, %args) = @_;
+    my ($name, $code, @args) = @_;
+    if (scalar(@args) % 2) {
+        croak "Odd-sized hash supplied to resource(). Is the previous resource missing a semicolon?";
+    }
+    my %args = @args;
 
     if ($name) {
         $name =~ s{^/}{}msx;
@@ -88,7 +94,8 @@ sub resource {
         }
 
         my %prev_settings = %SETTINGS;
-        @SETTINGS{ keys %args } = values %args;
+        Hash::Merge::set_clone_behavior(undef);
+        %SETTINGS = %{ merge(\%SETTINGS, \%args) };
 
         # Going deeper
         $code->();
