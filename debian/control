@@ -4,25 +4,30 @@ Priority: optional
 Maintainer: Marco Schumann <marco.schumann@pyur.com>
 Build-Depends: debhelper (>= 9),
  libmodule-build-perl,
+ libtest-exception-perl,
  perl
-Build-Depends-Indep: libhttp-message-perl,
- libjson-maybexs-perl,
+Build-Depends-Indep: libhash-merge-perl (>= 0.300),
+ libhttp-message-perl,
+ libjson-maybexs-perl (>= 1.004000),
  libjson-perl,
- libplack-middleware-crossorigin-perl (>= 0.009),
- libplack-perl (>= 1.0030),
- libtype-tiny-perl (>= 0.044),
- libyaml-perl (>= 0.90),
  liblog-dispatch-perl,
  libmoose-perl,
- libmoosex-types-perl
+ libmoosex-types-perl,
+ libplack-middleware-crossorigin-perl (>= 0.009),
+ libplack-perl (>= 1.0030),
+ libtest-pod-perl,
+ libtest-simple-perl (>= 1.001014),
+ libtype-tiny-perl (>= 0.044),
+ libyaml-perl (>= 0.90)
 Standards-Version: 3.9.8
 Homepage: https://github.com/khrt/Raisin
 
 Package: libraisin-perl
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends},
+ libhash-merge-perl (>= 0.300),
  libhttp-message-perl,
- libjson-maybexs-perl,
+ libjson-maybexs-perl (>= 1.004000),
  libjson-perl,
  libplack-middleware-crossorigin-perl (>= 0.009),
  libplack-perl (>= 1.0030),
