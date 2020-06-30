@@ -1,0 +1,15 @@
+https://jira.pyur.com/browse/I2R-1155
+--- a/lib/Raisin/Plugin/Swagger.pm
++++ b/lib/Raisin/Plugin/Swagger.pm
+@@ -502,7 +502,10 @@
+     my $objname = ucfirst($obj->name);
+     #--- $ref values must be RFC3986 compliant URIs ---
+     $objname =~ s/::/-/g;
+-    sprintf '%s-%s', $objname, uc(substr($fingerprint, 0, 10));
++    # --- PYUR: leave out fingerprint to have non volatile object names ---
++    # see discussion:
++    # https://github.com/khrt/Raisin/issues/103
++    return $objname;
+ }
+ 
+ sub _type_is_enum {
