@@ -1,3 +1,26 @@
+libraisin-perl (0.90-1) jessie-testing; urgency=low
+
+  [ Artur Khabibullin ]
+  * Replace `$count` with `$end` in a SYNPOSIS example
+  * Update Changelog
+
+  [ Dean Hamstead ]
+  * Make Dist::Zilla manage package version and some POD sections (#97)
+
+  [ Benjamin Rokseth ]
+  * Fix broken content-type negotiation for utf-8 (#92)
+
+  [ davel ]
+  * Generate Swagger for an ArrayRef with a coercion (#90)
+
+  [ Marc0 ]
+  * Allow swagger to reside behind a reverse proxy
+
+  [ Marco Schumann ]
+  * [I2R-1155] Hotfixing Swagger plugin
+
+ -- Marco Schumann <marco.schumann@pyur.com>  Tue, 30 Jun 2020 08:02:14 +0200
+
 libraisin-perl (0.89-1) jessie-testing; urgency=low
 
   * feature: update to version 0.89
