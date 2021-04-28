@@ -1,0 +1,58 @@
+Mitigates issue #14
+--- a/lib/Raisin/Middleware/Formatter.pm
++++ b/lib/Raisin/Middleware/Formatter.pm
+@@ -9,6 +9,7 @@
+ 
+ use parent 'Plack::Middleware';
+ 
++use File::Basename qw(fileparse);
+ use HTTP::Status qw(:constants);
+ use Plack::Request;
+ use Plack::Response;
+@@ -71,8 +72,8 @@
+ sub _accept_header_set { length(shift || '') }
+ sub _path_has_extension {
+     my $path = shift;
+-    my @chunks = split /\./, $path;
+-    scalar(@chunks) > 1;
++    my (undef, undef, $suffix) = fileparse($path, qr"\..[^.]*$");
++    $suffix;
+ }
+ 
+ sub negotiate_format {
+--- a/t/unit/middleware/formatter.t
++++ b/t/unit/middleware/formatter.t
+@@ -291,4 +291,33 @@
+     }
+ };
+ 
++subtest '_path_has_extension' => sub {
++    my @CASES = (
++        {
++            path => '/a/b/c.exe',
++            expected => '.exe',
++            message => 'extension',
++        },
++        {
++            path => '/a/b.at/c',
++            expected => '',
++            message => 'no extension',
++        },
++        {
++            path => '/',
++            expected => '',
++            message => 'slash',
++        },
++        {
++            path => '',
++            expected => '',
++            message => 'empty',
++        },
++    );
++
++    for my $c (@CASES) {
++        is Raisin::Middleware::Formatter::_path_has_extension($c->{path}), $c->{expected}, $c->{message};
++    }
++};
++
+ done_testing;
