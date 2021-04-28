@@ -1,3 +1,9 @@
+libraisin-perl (0.90-2) jessie-testing; urgency=medium
+
+  * [WSWB-1129] Mitigate "dot-in-path" issue
+
+ -- Marco Schumann <marco.schumann@pyur.com>  Wed, 28 Apr 2021 10:03:46 +0200
+
 libraisin-perl (0.90-1) jessie-testing; urgency=low
 
   [ Artur Khabibullin ]
