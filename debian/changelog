@@ -1,3 +1,17 @@
+libraisin-perl (0.91-1) jessie-testing; urgency=medium
+
+  [ Artur Khabibullin ]
+  * FIX Dot in the middle of path is not treated as an extension
+  * `format_from_extension` takes extensions as an argument instead of path
+  * Bump version to 0.91
+  * Update change log
+  * Upgrade version to 0.91
+
+  [ Marco Schumann ]
+  * [WSWB-1129] Remove patch for merged fix
+
+ -- Marco Schumann <marco.schumann@pyur.com>  Wed, 28 Apr 2021 14:33:41 +0200
+
 libraisin-perl (0.90-2) jessie-testing; urgency=medium
 
   * [WSWB-1129] Mitigate "dot-in-path" issue
