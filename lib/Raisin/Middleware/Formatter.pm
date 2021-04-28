@@ -9,6 +9,7 @@ package Raisin::Middleware::Formatter;
 
 use parent 'Plack::Middleware';
 
+use File::Basename qw(fileparse);
 use HTTP::Status qw(:constants);
 use Plack::Request;
 use Plack::Response;
@@ -71,8 +72,8 @@ sub call {
 sub _accept_header_set { length(shift || '') }
 sub _path_has_extension {
     my $path = shift;
-    my @chunks = split /\./, $path;
-    scalar(@chunks) > 1;
+    my (undef, undef, $suffix) = fileparse($path, qr/\..[^.]*$/);
+    $suffix;
 }
 
 sub negotiate_format {
@@ -86,8 +87,9 @@ sub negotiate_format {
     #   - default
 
     my @wanted_formats = do {
-        if (_path_has_extension($req->path)) {
-            $self->format_from_extension($req->path);
+        my $ext = _path_has_extension($req->path);
+        if ($ext) {
+            $self->format_from_extension($ext);
         }
         elsif (_accept_header_set($req->header('Accept'))) {
             # In case of wildcard matches, we default to first allowed format
@@ -107,13 +109,14 @@ sub negotiate_format {
 }
 
 sub format_from_extension {
-    my ($self, $path) = @_;
+    my ($self, $ext) = @_;
+    return unless $ext;
 
-    my @p = split /\./, $path;
-    return if scalar @p <= 1;
+    # Trim leading dot in the extension.
+    $ext = substr($ext, 1);
 
     my %media_types_map_flat_hash = $self->encoder->media_types_map_flat_hash;
-    my $format = $media_types_map_flat_hash{ $p[-1] };
+    my $format = $media_types_map_flat_hash{ $ext };
     return unless $format;
 
     $format;
